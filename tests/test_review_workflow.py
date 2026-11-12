@@ -294,7 +294,15 @@ class ServerCase(unittest.TestCase):
             }
 
         def list_events(req):
-            types = req["query"].get("types", [])
+            # Mirrors the real API (seen on run 43188153804 attempt 3): the
+            # filter is `types[]`; a bare `types` is rejected with HTTP 400.
+            if "types" in req["query"]:
+                return 400, {"type": "error", "error": {
+                    "type": "invalid_request_error",
+                    "message": "Unknown query parameter 'types'. Valid parameters: "
+                               "created_at[gt], created_at[gte], created_at[lt], created_at[lte], "
+                               "limit, order, page, types[]."}}
+            types = req["query"].get("types[]", [])
             if types == ["session.status_idle"]:
                 return 200, {"data": [idle_event] if idle_event else [], "next_page": None}
             if types == ["agent.message"]:

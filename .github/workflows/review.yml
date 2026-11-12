@@ -172,7 +172,8 @@ jobs:
           def anthropic(method, path, body=None, query=None, retry=True):
               url = API + path
               if query:
-                  url += "?" + urllib.parse.urlencode(query, doseq=True)
+                  # List filters use bracket keys such as `types[]`; keep the brackets literal.
+                  url += "?" + urllib.parse.urlencode(query, doseq=True, safe="[]")
               headers = {
                   "x-api-key": KEY,
                   "anthropic-version": VERSION,
@@ -388,7 +389,7 @@ jobs:
               if status == "idle":
                   try:
                       found = anthropic("GET", f"/v1/sessions/{sid}/events",
-                                        query={"types": ["session.status_idle"], "order": "desc", "limit": 1})
+                                        query={"types[]": ["session.status_idle"], "order": "desc", "limit": 1})
                   except ApiError as err:
                       finish("poll_failed", "无法读取会话事件",
                              f"请求返回 `{err}`。清理步骤会归档会话。", False)
@@ -419,7 +420,7 @@ jobs:
           # ---- 5. collect the final agent message -------------------------------
           messages, page = [], None
           for _ in range(50):
-              query = {"types": ["agent.message"], "order": "asc", "limit": 100}
+              query = {"types[]": ["agent.message"], "order": "asc", "limit": 100}
               if page:
                   query["page"] = page
               try:
