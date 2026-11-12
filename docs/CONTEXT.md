@@ -73,3 +73,7 @@
 - 2026-11-12：按 D11 squash 合并 PR #95（锁定 head `2c36c96`），合并提交 `3a7b9c5`；main 上调用文件哈希 `f63d923`，嵌套错误文件不在 main；main 的 CI（run `43245922593`）通过。
 - 2026-11-12：按 D12 开 6 个调用方 PR（只开不合）：Seainfrorabot#77、tg-anti-phishing-guard#48、tron-energy-premium-bot#50、tg-business-ai-assistant#7、scrapling-app#26、tiktok-downloader-bot#2，调用文件哈希均为 `f63d923`。首轮检查均为 `missing_api_key`（未配置密钥，没有会话、没有费用），各 PR 已有说明评论。
 - 待办：唐硕在 6 个仓库配置 `ANTHROPIC_API_KEY` 后，重跑各 PR 的失败作业（引用已锁定 SHA，重跑即加载正确版本）；唐硕完成 D9。可选后续：环境网络改为 `limited`；工具默认权限策略 `auto` 的取舍。
+- 2026-11-12 22:48（UTC+7）：唐硕告知「1和2中除更换凭据保管库的token以外、其余的都已完成」，即 6 个仓库已配置 `ANTHROPIC_API_KEY`、只读 token 已创建，保管库 `vlt_011C…` 中的凭据尚未替换（D9 未完成）。
+- 2026-11-12：核对 6 个 PR 的首轮运行均引用 `review.yml@e6cb87f`、PR head 未变后，通过接口重跑失败作业（均返回 201）。
+- 2026-11-12：6 个 PR 的重跑全部成功，检出核验均通过，各 PR 均只有一条报告评论（原地更新）：Seainfrorabot#77（`sesn_01MWdx4hHwLPRtXcRcpwB3Eo`，$1.43）、tg-anti-phishing-guard#48（`sesn_01JYkKnbQx8AaKHB85o5G3nH`，$1.79）、tron-energy-premium-bot#50（`sesn_01L2h8veMuWdwGdkv6J5oUH5`，$1.76）、tg-business-ai-assistant#7（`sesn_01DMwUoR8axf8JK3v6V1aTJd`，$1.53）、scrapling-app#26（`sesn_01WH9Rdq3whBwFmGvHHubm11`，$1.99）、tiktok-downloader-bot#2（`sesn_01D7cgH5LB6qQRNjMN21fd25`，$1.28）。6 份报告均为 Critical 0、High 0，唯一的 Medium 都是保管库凭据权限过宽（即 D9）。
+- 待办：D9（唐硕在 Console 替换保管库凭据）；6 个 PR 的合并需唐硕逐项确认。
