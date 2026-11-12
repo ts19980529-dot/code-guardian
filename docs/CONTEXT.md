@@ -69,3 +69,7 @@
 - 预检看到的实际配置（与最初建议不同，供唐硕决定是否调整）：模型 `claude-opus-5-5`、effort `xhigh`；工具默认权限策略 `auto`；MCP 服务器 github、context7、parallel-task；环境网络 `unrestricted`（建议为 `limited`）；环境的 go 包列表为空（未预装 `osv-scanner`、`gitleaks`）。首份报告显示会话内实际运行了 gitleaks 8.28.0、zizmor 1.32.0、semgrep 1.185.0、pip-audit 2.10.1、actionlint 1.7.12。
 - 首份报告的待决事项：M1 `@main` 未锁定 SHA，且 code-guardian 的 main 无分支保护；L1 默认保管库中的 GitHub 凭据为所有者本人、对 code-guardian 有 admin 权限（会话内 `get_me`/`search_repositories` 实测），建议换成只读、限定仓库的 fine-grained token。
 - 2026-11-12：唐硕决定 D9–D12。调用模板 `examples/code-guardian.yml` 改为锁定 `e6cb87f` 并更新文件头注释（报告 I1）；测试先改为要求完整 SHA，旧模板失败，新模板通过。
+- 2026-11-12：PR #95 改为锁定 `e6cb87f`（`2c36c96`）。运行 `43243790137` 引用 `review.yml@e6cb87f`，审查成功（会话 `sesn_01B1rrpxS1PGaPZqZUr8C7ty`，标价费用 $1.55，运行 10.5 分钟），报告无 Critical/High，唯一 Medium 即 L1（保管库凭据，D9 待唐硕完成）。仓库原有 CI 通过。
+- 2026-11-12：按 D11 squash 合并 PR #95（锁定 head `2c36c96`），合并提交 `3a7b9c5`；main 上调用文件哈希 `f63d923`，嵌套错误文件不在 main；main 的 CI（run `43245922593`）通过。
+- 2026-11-12：按 D12 开 6 个调用方 PR（只开不合）：Seainfrorabot#77、tg-anti-phishing-guard#48、tron-energy-premium-bot#50、tg-business-ai-assistant#7、scrapling-app#26、tiktok-downloader-bot#2，调用文件哈希均为 `f63d923`。首轮检查均为 `missing_api_key`（未配置密钥，没有会话、没有费用），各 PR 已有说明评论。
+- 待办：唐硕在 6 个仓库配置 `ANTHROPIC_API_KEY` 后，重跑各 PR 的失败作业（引用已锁定 SHA，重跑即加载正确版本）；唐硕完成 D9。可选后续：环境网络改为 `limited`；工具默认权限策略 `auto` 的取舍。
