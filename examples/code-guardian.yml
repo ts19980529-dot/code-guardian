@@ -1,0 +1,25 @@
+# Copy to .github/workflows/code-guardian.yml in a repository to enable
+# Code Guardian reviews. The repository needs an Actions secret named
+# ANTHROPIC_API_KEY.
+name: Code Guardian
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# A new push to the same PR cancels the review still running for the old
+# commit; the reusable workflow then interrupts and archives that session.
+concurrency:
+  group: code-guardian-${{ github.repository }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  code-guardian:
+    # Skip drafts, fork PRs (no secrets there) and Dependabot (separate secrets).
+    if: ${{ !github.event.pull_request.draft && github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ts19980529-dot/code-guardian/.github/workflows/review.yml@main
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
