@@ -52,3 +52,7 @@
 
 - 2026-11-12：建立本仓库。本地 29 个场景测试通过；11 项变异核验全部被测试拦下；actionlint v1.7.12 检查通过。
 - 2026-11-12：阻塞。GitHub 连接器写普通文件成功（`examples/code-guardian.yml`，提交 `297779e`），写 `.github/workflows/` 下的文件两次被拒（“connector requires additional permissions”）。`review.yml`、`test.yml` 未上传；niuniu PR #95 的修复也要写该目录，同样受阻。需唐硕在 claude.ai 连接器设置中重新连接 GitHub，授予工作流写权限。
+- 2026-11-12 16:01（UTC+7）：唐硕告知已重新授权连接器，并已添加密钥。
+- 2026-11-12：推送 `test.yml`（`9aece79`）和 `review.yml`（`1531956`），远端内容哈希与本地一致；`1531956` 上的 test CI（run `43187988789`）29 个测试通过。`9aece79` 的 test CI 失败属预期（当时 `review.yml` 尚未推送）。
+- 2026-11-12：PR #95 修复：删除嵌套文件（`e8bdea5`），新建 `.github/workflows/code-guardian.yml`（`c77ba83`，内容与 `examples/` 模板相同）。
+- 2026-11-12：首轮运行 run `43188153804`，第 1、2 次尝试结论均为 `missing_api_key`：作业日志中 `ANTHROPIC_API_KEY` 为空值，没有创建会话，没有费用。验收第 3 条部分通过：两次运行只产生一条报告评论（`6819379900`），第 2 次原地更新。待办：确认 niuniu 仓库 Actions 能读到 `ANTHROPIC_API_KEY` 后重跑。
