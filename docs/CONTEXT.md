@@ -56,3 +56,11 @@
 - 2026-11-12：推送 `test.yml`（`9aece79`）和 `review.yml`（`1531956`），远端内容哈希与本地一致；`1531956` 上的 test CI（run `43187988789`）29 个测试通过。`9aece79` 的 test CI 失败属预期（当时 `review.yml` 尚未推送）。
 - 2026-11-12：PR #95 修复：删除嵌套文件（`e8bdea5`），新建 `.github/workflows/code-guardian.yml`（`c77ba83`，内容与 `examples/` 模板相同）。
 - 2026-11-12：首轮运行 run `43188153804`，第 1、2 次尝试结论均为 `missing_api_key`：作业日志中 `ANTHROPIC_API_KEY` 为空值，没有创建会话，没有费用。验收第 3 条部分通过：两次运行只产生一条报告评论（`6819379900`），第 2 次原地更新。待办：确认 niuniu 仓库 Actions 能读到 `ANTHROPIC_API_KEY` 后重跑。
+- 2026-11-12 16:11（UTC+7）：唐硕告知密钥已改好。
+- 2026-11-12：第 3 次尝试，密钥生效，会话 `sesn_01TouQNX1qj7JeYQK42kasg5` 跑完，但工作流读取会话事件时报 400：`Unknown query parameter 'types' … types[]`。根因是代码用了 `types`，官方要求 `types[]`（文档 curl 示例本已写明，实现时未照用；测试模拟接口也未校验）。清理步骤已归档该会话。
+- 2026-11-12：修复 `e6cb87f`：改用 `types[]`；模拟接口改为与真实接口一样拒绝 `types`，旧代码因此有 6 个测试失败，修复后 29 个通过；两处变异核验均被拦下；CI 29/29。
+- 2026-11-12：第 4 次尝试（重跑）仍失败。日志显示重跑沿用首跑解析的 `review.yml@1531956`（旧代码），又产生一次会话 `sesn_01LeW9CgTfkiRwnZyKmwhhYx`（已归档）。教训：可复用工作流修复后不能靠重跑，要靠新事件；运行对象的 `referenced_workflows` 可在会话开始前确认版本。
+- 2026-11-12：在 PR #95 分支推空提交 `b1ff6fc` 触发新运行 `43193139485`，引用 `review.yml@e6cb87f`。结果 success：会话 `sesn_01RazBfZnK3zfLX8a5otjFJZ`，stop_reason `end_turn`，检出核验通过（HEAD `b1ff6fc`），标价费用 $1.04，运行 8.3 分钟；评论 `6819379900` 原地更新为完整中文报告。仓库原有 CI（run `43193139137`）通过。
+- 验收状态：第 1、2、3 条通过；第 4 条部分验证（已归档空闲会话，运行中被中断的路径线上未触发，仅单元测试覆盖）。
+- 预检看到的实际配置（与最初建议不同，供唐硕决定是否调整）：模型 `claude-opus-5-5`、effort `xhigh`；工具默认权限策略 `auto`；MCP 服务器 github、context7、parallel-task；环境网络 `unrestricted`（建议为 `limited`）；环境的 go 包列表为空（未预装 `osv-scanner`、`gitleaks`）。首份报告显示会话内实际运行了 gitleaks 8.28.0、zizmor 1.32.0、semgrep 1.185.0、pip-audit 2.10.1、actionlint 1.7.12。
+- 首份报告的待决事项：M1 `@main` 未锁定 SHA，且 code-guardian 的 main 无分支保护；L1 默认保管库中的 GitHub 凭据为所有者本人、对 code-guardian 有 admin 权限（会话内 `get_me`/`search_repositories` 实测），建议换成只读、限定仓库的 fine-grained token。
