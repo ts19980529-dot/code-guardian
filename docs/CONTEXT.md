@@ -33,6 +33,8 @@
 | D10 | 调用方引用 `review.yml` 的方式（报告 M1） | 「锁定完整 SHA」 |
 | D11 | niuniu PR #95 | 「按 M1 改完后 squash 合并」 |
 | D12 | 其余 6 个仓库接入时机 | 「现在就开 6 个 PR」 |
+| D13 | D9 是否现在做 | 「D9暂缓」（不影响审查运行；在完成前，每份报告会继续列出保管库凭据这条 Medium） |
+| D14 | 6 个调用方 PR | 「那6个PR为什么要合并？转为草稿即可」（不合并，转为草稿） |
 
 ## 工程选择（可由唐硕改定）
 
@@ -78,3 +80,6 @@
 - 2026-11-12：6 个 PR 的重跑全部成功，检出核验均通过，各 PR 均只有一条报告评论（原地更新）：Seainfrorabot#77（`sesn_01MWdx4hHwLPRtXcRcpwB3Eo`，$1.43）、tg-anti-phishing-guard#48（`sesn_01JYkKnbQx8AaKHB85o5G3nH`，$1.79）、tron-energy-premium-bot#50（`sesn_01L2h8veMuWdwGdkv6J5oUH5`，$1.76）、tg-business-ai-assistant#7（`sesn_01DMwUoR8axf8JK3v6V1aTJd`，$1.53）、scrapling-app#26（`sesn_01WH9Rdq3whBwFmGvHHubm11`，$1.99）、tiktok-downloader-bot#2（`sesn_01D7cgH5LB6qQRNjMN21fd25`，$1.28）。6 份报告均为 Critical 0、High 0，唯一的 Medium 都是保管库凭据权限过宽（即 D9）。
 - 待办：D9（唐硕在 Console 替换保管库凭据）；6 个 PR 的合并需唐硕逐项确认。
 - 2026-11-12：合并前核查（只读）。6 个 PR 均 open、mergeable_state `clean`、head 与审查时一致、全部检查 success。各仓库 main 最新提交上的部署痕迹：Seainfrorabot、tron-energy-premium-bot、tg-business-ai-assistant 有 Cloudflare Workers Builds 检查，tg-anti-phishing-guard 有两个（tapg-gateway、tapg-scanner），scrapling-app 有提交状态 `scrapling-app - web`，tiktok-downloader-bot 未见部署痕迹。因此合并（推送 main）在前 5 个仓库很可能触发一次以 main 现有代码重新构建或部署；各平台的具体部署配置未核实（GitHub deployments 接口返回 “Resource not accessible by integration”）。
+- 2026-11-12 23:19（UTC+7）：唐硕决定 D13、D14。6 个 PR 已转为草稿（接口均返回 200，复查 `draft=true`、`open`、head 未变）；转草稿后这 6 个仓库没有新的工作流运行。
+- 当前生效范围：只有 niuniu（调用文件在 main 上）会在新 PR 时自动审查。6 个仓库的调用文件只在各自草稿 PR 的分支上，main 上没有，所以这些仓库的其他 PR 不会触发审查；草稿 PR 本身也被调用文件的 `if` 条件跳过。要启用，需把对应 PR 转回“可审查”并合并（合并需唐硕逐个确认）。
+- 新仓库不会自动接入：个人账号没有账号级 Actions 密钥，要求所有仓库都跑某个工作流的规则是组织层级功能。每个新仓库需要调用文件加 `ANTHROPIC_API_KEY` 密钥，接入方式待唐硕选择。
