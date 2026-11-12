@@ -29,17 +29,21 @@
 | D6 | 单次审查最长时间 | 「60 分钟」 |
 | D7 | 推广节奏 | 「niuniu 验收后再开 6 个 PR」 |
 | D8 | 共同上下文位置 | 「仓库文件 docs/CONTEXT.md」（GitHub 连接器的建 Issue 表单在手机端不显示，两次尝试均未创建） |
+| D9 | 保管库 `vlt_011C…` 中的 GitHub 凭据（报告 L1） | 「换成只读 token」（由唐硕在 Console 替换） |
+| D10 | 调用方引用 `review.yml` 的方式（报告 M1） | 「锁定完整 SHA」 |
+| D11 | niuniu PR #95 | 「按 M1 改完后 squash 合并」 |
+| D12 | 其余 6 个仓库接入时机 | 「现在就开 6 个 PR」 |
 
 ## 工程选择（可由唐硕改定）
 
-- 调用方引用 `review.yml@main`，修改本仓库后所有接入仓库立即生效。改为锁定提交 SHA 更稳，但每次更新要改 7 个仓库。
+- 调用方引用 `review.yml` 的完整提交 SHA（D10，当前 `e6cb87fe57cb949110854b1898c51d91be1683c0`）。修改本仓库不会自动影响接入仓库；升级时审阅改动后逐个仓库改 SHA。
 - 审查结论不阻止合并：Code Guardian 检查只反映审查是否跑完，没有按严重程度设质量门禁。
 - 工具权限策略要求确认（`requires_action`）时，工作流不代为批准，直接结束并归档会话。
 
 ## 授权边界
 
-- 已授权：创建本仓库并写入工作流；修复 niuniu PR #95 的分支；首轮验收所需的运行。
-- 需要逐项确认：合并任何 PR；设置任何密钥（`ANTHROPIC_API_KEY` 由唐硕在各仓库配置）；向其余 6 个仓库开调用方 PR（D7：在 niuniu 验收之后）。
+- 已授权：创建本仓库并写入工作流；修复 niuniu PR #95 的分支；首轮验收所需的运行；PR #95 按 D10 修改后、检查全绿时 squash 合并（D11）；向其余 6 个仓库开调用方 PR（D12，只开 PR，不合并）。
+- 需要逐项确认：合并除 PR #95 以外的任何 PR；设置任何密钥（`ANTHROPIC_API_KEY` 由唐硕在各仓库配置）；替换保管库凭据（D9，由唐硕在 Console 操作）。
 
 ## 验收条件
 
@@ -64,3 +68,4 @@
 - 验收状态：第 1、2、3 条通过；第 4 条部分验证（已归档空闲会话，运行中被中断的路径线上未触发，仅单元测试覆盖）。
 - 预检看到的实际配置（与最初建议不同，供唐硕决定是否调整）：模型 `claude-opus-5-5`、effort `xhigh`；工具默认权限策略 `auto`；MCP 服务器 github、context7、parallel-task；环境网络 `unrestricted`（建议为 `limited`）；环境的 go 包列表为空（未预装 `osv-scanner`、`gitleaks`）。首份报告显示会话内实际运行了 gitleaks 8.28.0、zizmor 1.32.0、semgrep 1.185.0、pip-audit 2.10.1、actionlint 1.7.12。
 - 首份报告的待决事项：M1 `@main` 未锁定 SHA，且 code-guardian 的 main 无分支保护；L1 默认保管库中的 GitHub 凭据为所有者本人、对 code-guardian 有 admin 权限（会话内 `get_me`/`search_repositories` 实测），建议换成只读、限定仓库的 fine-grained token。
+- 2026-11-12：唐硕决定 D9–D12。调用模板 `examples/code-guardian.yml` 改为锁定 `e6cb87f` 并更新文件头注释（报告 I1）；测试先改为要求完整 SHA，旧模板失败，新模板通过。

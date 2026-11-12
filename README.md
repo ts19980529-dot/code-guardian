@@ -9,6 +9,8 @@
 1. 在该仓库添加 Actions 密钥 `ANTHROPIC_API_KEY`（与智能体同一工作区的 Claude API 密钥）。
 2. 把 [`examples/code-guardian.yml`](examples/code-guardian.yml) 复制为该仓库的 `.github/workflows/code-guardian.yml`。
 
+调用方用完整提交 SHA 引用 `review.yml`（D10），`code-guardian` 的 main 变化不会自动影响接入的仓库。升级步骤：先审阅 `review.yml` 的改动，确认测试 CI 通过，再在各仓库把 `uses:` 里的 SHA 改成新提交。
+
 ## 运行过程
 
 `review.yml` 是可复用工作流（reusable workflow），分两个作业：

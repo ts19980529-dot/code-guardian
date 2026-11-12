@@ -30,6 +30,8 @@ BASE_SHA = "2b689e6537dd04082c98964ba9afd3f87da4a9ce"
 CLONE_TOKEN = "ghs_FAKE_CLONE_TOKEN_should_never_be_printed"
 API_KEY = "sk-ant-FAKE-should-never-be-printed"
 SESSION_ID = "sesn_test_001"
+# review.yml commit verified by niuniu run 43193139485 (D10).
+PINNED_SHA = "e6cb87fe57cb949110854b1898c51d91be1683c0"
 MARKER = "<!-- code-guardian:report -->"
 
 # Variables that GitHub provides to every step; they do not need a YAML entry.
@@ -398,7 +400,13 @@ class StructureTests(unittest.TestCase):
         on = wf.get("on", wf.get(True))
         self.assertEqual(on["pull_request"]["types"], ["opened", "synchronize", "reopened", "ready_for_review"])
         job = wf["jobs"]["code-guardian"]
-        self.assertEqual(job["uses"], "ts19980529-dot/code-guardian/.github/workflows/review.yml@main")
+        # D10: callers pin review.yml to a full, reviewed commit SHA (never a branch).
+        self.assertEqual(job["uses"], f"ts19980529-dot/code-guardian/.github/workflows/review.yml@{PINNED_SHA}")
+        self.assertRegex(PINNED_SHA, r"^[0-9a-f]{40}$")
+        with open(CALLER_YML, encoding="utf-8") as fh:
+            header = fh.read().split("\nname:", 1)[0]
+        self.assertNotIn("Copy to", header)  # the file lives in the repo already (report item I1)
+        self.assertIn("ANTHROPIC_API_KEY", header)
         self.assertEqual(job["permissions"], {"contents": "read", "pull-requests": "write"})
         self.assertIn("draft", job["if"])
         self.assertIn("head.repo.full_name", job["if"])

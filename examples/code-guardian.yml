@@ -1,6 +1,8 @@
-# Copy to .github/workflows/code-guardian.yml in a repository to enable
-# Code Guardian reviews. The repository needs an Actions secret named
-# ANTHROPIC_API_KEY.
+# Code Guardian: AI code, security and dependency review on each pull request,
+# run by the reusable workflow in ts19980529-dot/code-guardian.
+# Requires the Actions secret ANTHROPIC_API_KEY in this repository.
+# review.yml is pinned to a reviewed commit. To upgrade, review the diff in
+# code-guardian first, then change the SHA below.
 name: Code Guardian
 
 on:
@@ -20,6 +22,6 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: ts19980529-dot/code-guardian/.github/workflows/review.yml@main
+    uses: ts19980529-dot/code-guardian/.github/workflows/review.yml@e6cb87fe57cb949110854b1898c51d91be1683c0
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
